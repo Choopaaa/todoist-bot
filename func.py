@@ -37,7 +37,7 @@ def delete_tasks(task_id):
     return response2_json
 
 print(get_tasks())
-
+print(add_tasks())
 
 
 
