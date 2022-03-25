@@ -1,24 +1,25 @@
+from http.client import InvalidURL
+from json import JSONDecodeError
 from logging import exception
 import requests
 
 
-class BearerAuth(requests.auth.AuthBase):
-    def __init__(self, token):
-        self.token = token
-    def __call__(self, r):
-        r.headers["authorization"] = "Bearer " + self.token
-        return r
+headers = {"Authorization": "Bearer 839f660cc572bd387ef85163b740e334d1fa768a"}
 
 # Получение списка задач
 def get_tasks():
 
     try:
-        response = requests.get('https://api.todoist.com/rest/v1/tasks', auth=BearerAuth('839f660cc572bd387ef85163b740e334d1fa768a'))
+        response = requests.get('https://api.todoist.com/rest/v1/tasks', headers = headers)
         response_json = response.json()
 
         return response_json
-    except Exception as error:
+
+    except InvalidURL:
+        print("Введён неверный адрес сайта")
+    except JSONDecodeError as error:
         print(error)
+        
 # Добавление новой задачи
 def add_tasks(message):
     
@@ -26,7 +27,7 @@ def add_tasks(message):
         response1 = requests.post(
             'https://api.todoist.com/rest/v1/tasks', 
             data = {'content': message}, 
-            auth=BearerAuth('839f660cc572bd387ef85163b740e334d1fa768a')
+            headers = headers
         )
         response1_json = response1.json()
 
@@ -34,7 +35,9 @@ def add_tasks(message):
             print(True)
 
         return response1_json
-    except Exception as error:
+    except InvalidURL:
+        print("Введён неверный адрес сайта")
+    except JSONDecodeError as error:
         print(error)
 
 # Удаление задачи
@@ -42,14 +45,17 @@ def delete_tasks(task_id):
 
     try:
 
-        response2 = requests.delete(f'https://api.todoist.com/rest/v1/tasks/{task_id}', auth=BearerAuth('839f660cc572bd387ef85163b740e334d1fa768a'))
+        response2 = requests.delete(f'https://api.todoist.com/rest/v1/tasks/{task_id}', headers = headers)
         response2_json = response2.json()
 
         if response2.status_code == 204:
             print(True)
 
         return response2_json
-        
-    except Exception as error:
+
+    except InvalidURL:
+        print("Введён неверный адрес сайта")
+    except JSONDecodeError as error:
         print(error)
 
+add_tasks("Я задача")
